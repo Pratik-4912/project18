@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Color Palette Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #image-container img {
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+        }
+        .color-box {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            margin: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI-Powered Image Color Palette Generator</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <div id="image-container"></div>
+    <div id="palette"></div>
+
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        document.getElementById('image-container').innerHTML = '';
+                        document.getElementById('palette').innerHTML = '';
+                        document.getElementById('image-container').appendChild(img);
+
+                        const colorThief = new ColorThief();
+                        const colors = colorThief.getPalette(img, 6);
+                        
+                        colors.forEach(color => {
+                            const colorBox = document.createElement('div');
+                            colorBox.className = 'color-box';
+                            colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                            document.getElementById('palette').appendChild(colorBox);
+                        });
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
